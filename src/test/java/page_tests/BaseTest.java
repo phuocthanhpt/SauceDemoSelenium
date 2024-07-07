@@ -10,6 +10,8 @@ import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.Markup;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -32,6 +34,7 @@ public class BaseTest {
 
     protected static ThreadLocal<ExtentTest> testLogger = new ThreadLocal<>();
     private static final ExtentReports reports = ExtentReportHelper.getReportObject();
+    private static final Logger logger = LogManager.getLogger(BasePage.class);
 
     @BeforeMethod
     public void setUp(ITestResult iTestResult) {
@@ -40,12 +43,14 @@ public class BaseTest {
         co = new ChromeOptions();
         if (browser.equalsIgnoreCase("chrome")) {
             if (AppConstants.platform.equalsIgnoreCase("local")) {
+                logger.info("Browser name: Chrome");
                 co.addArguments("--remote-allow-origins=*");
                 WebDriverManager.chromedriver().setup();
                 driver = new ChromeDriver(co);
             }
         } else if (browser.equalsIgnoreCase("firefox")) {
             if (AppConstants.platform.equalsIgnoreCase("local")) {
+                logger.info("Browser name: Firefox");
                 fo.addArguments("--remote-allow-origins=*");
                 WebDriverManager.firefoxdriver().setup();
                 driver = new FirefoxDriver(fo);
@@ -65,11 +70,12 @@ public class BaseTest {
     public void tearDown(ITestResult iTestResult){
         if(iTestResult.isSuccess()){
             testLogger.get().log(Status.PASS, MarkupHelper.createLabel(iTestResult.getMethod().getMethodName() + " is successful", ExtentColor.GREEN));
+            logger.info("test passed");
         }else{
             testLogger.get().log(Status.FAIL, "Test failed due to: " + iTestResult.getThrowable());
             String screenshot = BasePage.getScreenshot(iTestResult.getMethod().getMethodName()+".jpg", driver);
             testLogger.get().fail( MediaEntityBuilder.createScreenCaptureFromBase64String(BasePage.convertImg_Base64(screenshot)).build());
-
+            logger.info("test failed");
         }
         testLogger.get().log(Status.INFO, "Driver End Time: " + LocalDateTime.now());
         driver.quit();
@@ -77,6 +83,7 @@ public class BaseTest {
 
     @AfterClass
     public void reportFlush(){
+        logger.info("Extent report generated");
         reports.flush();
     }
 }

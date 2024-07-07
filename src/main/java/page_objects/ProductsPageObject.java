@@ -8,8 +8,8 @@ public class ProductsPageObject extends WebElementsInteractions {
 
     WebDriver driver;
     private final By getTitleOfProductPage = By.xpath("//span[contains(text(), 'Products')]");
-    private final By getTextOf1stItem = By.xpath("//a[@id='item_111_title_link']/div");
-//    private final By getTextOf1stItem = By.xpath("//a[@id='item_4_title_link']/div");
+//    private final By getTextOf1stItem = By.xpath("//a[@id='item_111_title_link']/div");
+    private final By getTextOf1stItem = By.xpath("//a[@id='item_4_title_link']/div");
 
     public ProductsPageObject(WebDriver driver) {
         super(driver);
