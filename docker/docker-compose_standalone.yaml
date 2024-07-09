@@ -1,0 +1,25 @@
+version: "3"
+services:
+  standalone-chrome:
+    image: selenium/standalone-chromium
+    hostname: standalone-chrome
+    privileged: true
+    shm_size: 2gb
+    ports:
+      - "4441:4444"
+      - "7901:7900"
+    environment:
+      - SE_VNC_NO_PASSWORD=1
+      - SE_NODE_MAX_SESSIONS=1
+
+  standalone-firefox:
+    image: selenium/standalone-firefox
+    hostname: standalone-firefox
+    privileged: true
+    shm_size: 2gb
+    ports:
+      - "4442:4444"
+      - "7902:7900"
+    environment:
+      - SE_VNC_NO_PASSWORD=1
+      - SE_NODE_MAX_SESSION=1
