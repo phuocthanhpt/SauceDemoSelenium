@@ -7,7 +7,6 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
-import com.aventstack.extentreports.markuputils.Markup;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.logging.log4j.LogManager;
@@ -19,22 +18,20 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
 import utils.ExtentReportHelper;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class BaseTest {
 
     protected WebDriver driver;
     protected String browser;
-    private ChromeOptions co;
-    private FirefoxOptions fo;
+    private ChromeOptions chromeOptions;
+    private FirefoxOptions firefoxOptions;
 
     protected static ThreadLocal<ExtentTest> testLogger = new ThreadLocal<>();
     private static final ExtentReports reports = ExtentReportHelper.getReportObject();
@@ -43,8 +40,8 @@ public class BaseTest {
     @BeforeMethod
     public void setUp(ITestResult iTestResult) {
         browser = AppConstants.browsername;
-        fo = new FirefoxOptions();
-        co = new ChromeOptions();
+        firefoxOptions = new FirefoxOptions();
+        chromeOptions = new ChromeOptions();
         if (browser.equalsIgnoreCase("chrome")) {
             if (AppConstants.platform.equalsIgnoreCase("local")) {
                 logger.info("Browser name: Chrome");
@@ -53,20 +50,20 @@ public class BaseTest {
 //                driver = new ChromeDriver(co);
                 driver = new ChromeDriver();
             } else if (AppConstants.platform.equalsIgnoreCase("remote")) {
-                co.setPlatformName("linux");
-                co.setPageLoadStrategy(PageLoadStrategy.EAGER);
+                chromeOptions.setPlatformName("linux");
+                chromeOptions.setPageLoadStrategy(PageLoadStrategy.EAGER);
                 try {
-                    driver = new RemoteWebDriver(new URL("http://localhost:4444"), co);
+                    driver = new RemoteWebDriver(new URL("http://localhost:4444"), chromeOptions);
                 } catch (MalformedURLException e) {
                     throw new RuntimeException(e);
                 }
             } else if(AppConstants.platform.equalsIgnoreCase("remote_git")){
-                co.addArguments("--headless");
-                co.addArguments("--disable-gpu");
-                co.addArguments("--no-sandbox");
-                co.addArguments("--remote-allow-origins=*");
+                chromeOptions.addArguments("--headless");
+                chromeOptions.addArguments("--disable-gpu");
+                chromeOptions.addArguments("--no-sandbox");
+                chromeOptions.addArguments("--remote-allow-origins=*");
                 WebDriverManager.chromedriver().setup();
-                driver = new ChromeDriver(co);
+                driver = new ChromeDriver(chromeOptions);
             }
             else {
                 logger.error("Platform is not supported");
@@ -79,10 +76,10 @@ public class BaseTest {
 //                driver = new FirefoxDriver(fo);
                 driver = new FirefoxDriver();
             } else if (AppConstants.platform.equalsIgnoreCase("remote")) {
-                fo.setPlatformName("linux");
-                fo.setPageLoadStrategy(PageLoadStrategy.EAGER);
+                firefoxOptions.setPlatformName("linux");
+                firefoxOptions.setPageLoadStrategy(PageLoadStrategy.EAGER);
                 try {
-                    driver = new RemoteWebDriver(new URL("http://localhost:4444"), fo);
+                    driver = new RemoteWebDriver(new URL("http://localhost:4444"), firefoxOptions);
                 } catch (MalformedURLException e) {
                     throw new RuntimeException(e);
                 }
